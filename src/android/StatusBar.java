@@ -255,12 +255,13 @@ public class StatusBar extends CordovaPlugin {
     }
 
     private void setStatusBarStyle(final String style) {
-          if (style == null || style.isEmpty()) return;
+        if (style == null || style.isEmpty()) return;
 
+        Window window = cordova.getActivity().getWindow();
+        View decorView = window.getDecorView();
+        
         String lowerCaseStyle = style.toLowerCase();
-        WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(
-            getWindow(), getWindow().getDecorView()
-        );
+        WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(window, decorView);
     
         if (lowerCaseStyle.equals("default")) {
             controller.setAppearanceLightStatusBars(true);  // Dark text
