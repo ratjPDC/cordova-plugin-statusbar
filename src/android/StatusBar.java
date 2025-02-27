@@ -255,46 +255,21 @@ public class StatusBar extends CordovaPlugin {
     }
 
     private void setStatusBarStyle(final String style) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Window window = cordova.getActivity().getWindow();
-            View decorView = window.getDecorView();
+          if (style == null || style.isEmpty()) return;
+
+        String lowerCaseStyle = style.toLowerCase();
+        WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(
+            getWindow(), getWindow().getDecorView()
+        );
     
-            if (style != null && !style.isEmpty()) {
-                String lowerCaseStyle = style.toLowerCase();
-    
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  // Android 11+
-                    WindowInsetsController insetsController = window.getInsetsController();
-                    if (insetsController != null) {
-                        if (lowerCaseStyle.equals("default")) {
-                            insetsController.setSystemBarsAppearance(
-                                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                            );
-                        } else if (lowerCaseStyle.equals("lightcontent") ||
-                                   lowerCaseStyle.equals("blacktranslucent") ||
-                                   lowerCaseStyle.equals("blackopaque")) {
-                            insetsController.setSystemBarsAppearance(
-                                0,  // Remove light status bar
-                                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                            );
-                        } else {
-                            LOG.e(TAG, "Invalid style, must be either 'default', 'lightcontent' or the deprecated 'blacktranslucent' and 'blackopaque'");
-                        }
-                    }
-                } else {  // Android 6 to 10 (API 23-29)
-                    int uiOptions = decorView.getSystemUiVisibility();
-    
-                    if (lowerCaseStyle.equals("default")) {
-                        decorView.setSystemUiVisibility(uiOptions | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-                    } else if (lowerCaseStyle.equals("lightcontent") ||
-                               lowerCaseStyle.equals("blacktranslucent") ||
-                               lowerCaseStyle.equals("blackopaque")) {
-                        decorView.setSystemUiVisibility(uiOptions & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-                    } else {
-                        LOG.e(TAG, "Invalid style, must be either 'default', 'lightcontent' or the deprecated 'blacktranslucent' and 'blackopaque'");
-                    }
-                }
-            }
+        if (lowerCaseStyle.equals("default")) {
+            controller.setAppearanceLightStatusBars(true);  // Dark text
+        } else if (lowerCaseStyle.equals("lightcontent") ||
+                   lowerCaseStyle.equals("blacktranslucent") ||
+                   lowerCaseStyle.equals("blackopaque")) {
+            controller.setAppearanceLightStatusBars(false); // Light text
+        } else {
+            LOG.e(TAG, "Invalid style, must be 'default', 'lightcontent', 'blacktranslucent' or 'blackopaque'");
         }
     }
 
