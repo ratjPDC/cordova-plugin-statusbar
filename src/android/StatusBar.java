@@ -258,7 +258,6 @@ public class StatusBar extends CordovaPlugin {
             if (style != null && !style.isEmpty()) {
                 Window window = cordova.getActivity().getWindow();
                 View decorView = window.getDecorView();
-                WindowInsetsControllerCompat windowInsetsControllerCompat = WindowCompat.getInsetsController(window, decorView);
 
                 String[] darkContentStyles = {
                     "default",
@@ -271,12 +270,29 @@ public class StatusBar extends CordovaPlugin {
                 };
 
                 if (Arrays.asList(darkContentStyles).contains(style.toLowerCase())) {
-                    windowInsetsControllerCompat.setAppearanceLightStatusBars(true);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        getWindow().getInsetsController().setSystemBarsAppearance(
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,  // Light text
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        );
+                    }
+                    else {
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);  
+                    }
+                    
                     return;
                 }
 
                 if (Arrays.asList(lightContentStyles).contains(style.toLowerCase())) {
-                    windowInsetsControllerCompat.setAppearanceLightStatusBars(false);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        window.getInsetsController().setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+                    }
+                    else {
+                        decorView.setSystemUiVisibility(0);
+                    }
+                    
                     return;
                 }
 
